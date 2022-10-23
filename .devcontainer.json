@@ -1,0 +1,15 @@
+{
+	"name": "lob-simulation",
+	"dockerComposeFile": [
+		"docker-compose.dev.yml"
+	],
+	"service": "app",
+	"workspaceFolder": "/workspace",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-toolsai.jupyter"
+			]
+		}
+	}
+}

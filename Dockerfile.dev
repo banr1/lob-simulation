@@ -1,0 +1,13 @@
+FROM python:3.10.6 as build
+
+WORKDIR /workspace
+
+COPY pyproject.toml ./
+COPY poetry.lock ./
+
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH /root/.local/bin:$PATH
+RUN poetry config virtualenvs.create false
+RUN poetry install
+
+RUN apt-get update && apt-get -y upgrade && apt-get install -y htop vim
