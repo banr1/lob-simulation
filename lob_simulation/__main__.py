@@ -6,7 +6,7 @@ import seaborn as sns
 
 from .lob import LOB
 from .generator import CancelGenerator, LimitOrderGenerator, MarketOrderGenerator
-from .model import LimitDf, CancelDf, MarketDf, Side, Sr
+from .model import Df, LimitDf, CancelDf, MarketDf, Side, Sr
 
 
 UNIT = 0.1
@@ -59,8 +59,8 @@ def main():
 
         init_mid_price = lob.receive_orders(limits=limits)
 
-    mid_price_history = Sr([init_mid_price])
-    for i in range(1, N_ROUND+1):
+    mid_price_history = [Sr({"time": 0, "mid_price": init_mid_price})]
+    for t in range(1, N_ROUND+1):
         limits = pd.concat([lo.run(lob.mid_price) for lo in lo_generators])
         cancels = pd.concat([ca.run() for ca in ca_generators])
         markets = pd.concat([
@@ -68,12 +68,13 @@ def main():
             ms_generator.run(),
         ])
         mid_price = lob.receive_orders(markets=markets, limits=limits, cancels=cancels)
-        logger.info(f"[{i:04}]: {mid_price}")
-        mid_price_history = pd.concat([mid_price_history, Sr([mid_price])], ignore_index=True)
+        logger.info(f"[{t:04}]: {mid_price}")
+        mid_price_history.append(Sr({"time": t, "mid_price": mid_price}))
+    mid_price_history = Df(mid_price_history)
 
     fig, ax = plt.subplots()
-    sns.lineplot(data=mid_price_history, ax=ax)
-    fig.savefig("img/figure.png")
+    sns.lineplot(x="time", y="mid_price", data=mid_price_history, ax=ax)
+    fig.savefig("img/figure.png", bbox_inches="tight")
 
 
 if __name__ == "__main__":
