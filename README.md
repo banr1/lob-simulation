@@ -7,15 +7,21 @@ https://q-squared-technologies.notion.site/Emerging-Float-LOB-Model-ed98c622b52d
 Number of limit order, cancel order, market long order, market short order
 
 $$\lambda_i^L(t) = \mu_i^L$$
+
 $$\lambda_i^C(t) = \mu_i^C$$
+
 $$\lambda^{M_l}(t) = \mu^{M_l}$$
+
 $$\lambda^{M_s}(t) = \mu^{M_s}$$
 
 Amount of limit order, cancel order, market long order, market short order
 
 $$\lambda_i^L(t) = u \times (1 + \xi_i^L)$$
+
 $$\lambda_i^C(t) = u \times (1 + \xi_i^C)$$
+
 $$\lambda^{M_l}(t) = u \times (1 + \xi^{M_l})$$
+
 $$\lambda^{M_s}(t) = u \times (1 + \xi^{M_s})$$
 
 where
