@@ -11,14 +11,14 @@ class LimitOrderGenerator:
     Limit Orderを生成するクラス。
     ex)
     - price: 100
-    - lam: 5
+    - mu: 5
     - xi: 100
     - unit: 0.1
     のとき、...
     """
-    def __init__(self, price: float, lam: float, xi: float, unit: float) -> None:
+    def __init__(self, price: float, mu: float, xi: float, unit: float) -> None:
         self.price = price
-        self.lam = lam
+        self.mu = mu
         self.xi = xi
         self.unit = unit
 
@@ -29,13 +29,13 @@ class LimitOrderGenerator:
             side = Side.SHORT
         else:
             return LimitDf()
-        # 注文数: 平均lamのPoisson dist.
-        order_num = np.random.poisson(self.lam)
+        # 注文数: 平均muのPoisson dist.
+        order_num = np.random.poisson(self.mu)
         if order_num == 0:
             return LimitDf()
 
         # それぞれの注文量: 1 + 平均xiのPoisson dist.
-        order_amount = self.unit * np.random.poisson(self.xi)
+        order_amount = self.unit * (1 + np.random.poisson(self.xi))
         order_list = LimitDf(
             [LimitSr({"price": self.price, "amount": order_amount, "side": side}, name=uuid4()) for _ in range(order_num)]
         )
@@ -50,20 +50,20 @@ class MarketOrderGenerator:
     """
     Market Orderを生成するクラス。
     """
-    def __init__(self, side: Side, lam: float, xi: float, unit: float) -> None:
+    def __init__(self, side: Side, mu: float, xi: float, unit: float) -> None:
         self.side = side
-        self.lam = lam
+        self.mu = mu
         self.xi = xi
         self.unit = unit
 
     def run(self) -> MarketDf:
-        # 注文数: 平均lamのPoisson dist.
-        order_num = np.random.poisson(self.lam)
+        # 注文数: 平均muのPoisson dist.
+        order_num = np.random.poisson(self.mu)
         if order_num == 0:
             return MarketDf()
 
         # それぞれの注文量: 1 + 平均xiのPoisson dist.
-        order_amount = self.unit * np.random.poisson(self.xi)
+        order_amount = self.unit * (1 + np.random.poisson(self.xi))
         order_list = MarketDf(
             [MarketSr({"amount": order_amount, "side": self.side}, name=uuid4()) for _ in range(order_num)]
         )
@@ -75,17 +75,17 @@ class MarketOrderGenerator:
 
 
 class CancelGenerator:
-    def __init__(self, price: float, lam: float, xi: float, unit: float) -> None:
+    def __init__(self, price: float, mu: float, xi: float, unit: float) -> None:
         self.price = price
-        self.lam = lam
+        self.mu = mu
         self.xi = xi
         self.unit = unit
 
     def run(self) -> CancelDf:
-        # 注文数: 平均lamのPoisson dist.
-        order_num = np.random.poisson(self.lam)
+        # 注文数: 平均muのPoisson dist.
+        order_num = np.random.poisson(self.mu)
         # それぞれの注文量: 1 + 平均xiのPoisson dist.
-        order_amount = self.unit * np.random.poisson(self.xi)
+        order_amount = self.unit * (1 + np.random.poisson(self.xi))
         order_list = CancelDf(
             [CancelSr({"price": self.price, "amount": order_amount}, name=uuid4()) for _ in range(order_num)]
         )
