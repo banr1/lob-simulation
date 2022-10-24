@@ -1,5 +1,5 @@
-from asyncio.log import logger
 from uuid import uuid4
+
 import numpy as np
 from pandas.api.types import CategoricalDtype
 
@@ -16,6 +16,7 @@ class LimitOrderGenerator:
     - unit: 0.1
     のとき、...
     """
+
     def __init__(self, price: float, mu: float, xi: float, unit: float) -> None:
         self.price = price
         self.mu = mu
@@ -37,7 +38,13 @@ class LimitOrderGenerator:
         # それぞれの注文量: 1 + 平均xiのPoisson dist.
         order_amount = self.unit * (1 + np.random.poisson(self.xi))
         order_list = LimitDf(
-            [LimitSr({"price": self.price, "amount": order_amount, "side": side}, name=uuid4()) for _ in range(order_num)]
+            [
+                LimitSr(
+                    {"price": self.price, "amount": order_amount, "side": side},
+                    name=uuid4(),
+                )
+                for _ in range(order_num)
+            ]
         )
         order_list = order_list.astype(
             {"side": CategoricalDtype(categories=list(Side))}
@@ -50,6 +57,7 @@ class MarketOrderGenerator:
     """
     Market Orderを生成するクラス。
     """
+
     def __init__(self, side: Side, mu: float, xi: float, unit: float) -> None:
         self.side = side
         self.mu = mu
@@ -65,7 +73,10 @@ class MarketOrderGenerator:
         # それぞれの注文量: 1 + 平均xiのPoisson dist.
         order_amount = self.unit * (1 + np.random.poisson(self.xi))
         order_list = MarketDf(
-            [MarketSr({"amount": order_amount, "side": self.side}, name=uuid4()) for _ in range(order_num)]
+            [
+                MarketSr({"amount": order_amount, "side": self.side}, name=uuid4())
+                for _ in range(order_num)
+            ]
         )
         order_list = order_list.astype(
             {"side": CategoricalDtype(categories=list(Side))}
@@ -87,6 +98,9 @@ class CancelGenerator:
         # それぞれの注文量: 1 + 平均xiのPoisson dist.
         order_amount = self.unit * (1 + np.random.poisson(self.xi))
         order_list = CancelDf(
-            [CancelSr({"price": self.price, "amount": order_amount}, name=uuid4()) for _ in range(order_num)]
+            [
+                CancelSr({"price": self.price, "amount": order_amount}, name=uuid4())
+                for _ in range(order_num)
+            ]
         )
         return order_list
